@@ -59,6 +59,8 @@ public class GameManager : MonoBehaviour
     public void ChangeToGameScene()
     {
         GetComponent<PlayerInputManager>().DisableJoining();
+        playerManager.ManageLayers();
+        playerManager.initializeCamera();
         foreach (GameObject player in players)
         {
             player.GetComponent<PlayerInput>().SwitchCurrentActionMap("Player");

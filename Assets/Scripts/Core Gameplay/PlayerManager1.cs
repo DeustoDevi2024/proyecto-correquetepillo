@@ -26,21 +26,19 @@ public class PlayerManager1 : MonoBehaviour
         players.Add(input);
         GameObject playerParent = input.transform.Find("Character").gameObject;
 
+        input.actions.FindAction("NewSubmit").performed += (ctx => Debug.Log("holassss")); //Funciona de manera independiente a los unity events
 
-        //Para que la cámara apunte al jugador correspondiente
-        int layerToAdd = 5 + players.Count;
-        playerParent.GetComponentInChildren<CinemachineFreeLook>().gameObject.layer = layerToAdd;
-        playerParent.GetComponentInChildren<Camera>().cullingMask |= 1 << layerToAdd;
 
-        //Para controlar la cámara del jugador correspondiente
-        playerParent.GetComponentInChildren<InputHandler>().horizontal = input.actions.FindAction("Camera");
+        //input.actionEvents[0].AddListener(prueba);
 
-        //int layerToAdd2 = 9 + players.Count;
-        //playerParent.GetComponentInChildren<Camera>().cullingMask |= 1 << layerToAdd2;
+        //foreach (PlayerInput.ActionEvent eventito in input.actionEvents)
+        //{
+        //    Debug.Log(eventito.actionName);
+        //}
 
-        playerParent.transform.Find("CharacterModel").Find("Launchpoint").gameObject.layer = layerToAdd;
+        //ManageLayers(input, playerParent);
 
-        initializeCamera();
+        //initializeCamera();
         gameManager.UpdatePlayers();
 
         //if (players.Count == numeroDeJugadores)
@@ -52,7 +50,33 @@ public class PlayerManager1 : MonoBehaviour
 
     }
 
-    private void initializeCamera()
+    public void ManageLayers()
+    {
+        int contador = 0;
+        foreach (PlayerInput playerInput in players)
+        {
+            GameObject playerParent = playerInput.transform.Find("Character").gameObject;
+
+            //Para que la cámara apunte al jugador correspondiente
+            int layerToAdd = 5 + contador;
+            contador++;
+            playerParent.GetComponentInChildren<CinemachineFreeLook>().gameObject.layer = layerToAdd;
+            playerParent.GetComponentInChildren<Camera>().cullingMask |= 1 << layerToAdd;
+
+            //Para controlar la cámara del jugador correspondiente
+            playerParent.GetComponentInChildren<InputHandler>().horizontal = playerInput.actions.FindAction("Camera");
+
+            //int layerToAdd2 = 9 + players.Count;
+            //playerParent.GetComponentInChildren<Camera>().cullingMask |= 1 << layerToAdd2;
+
+            playerParent.transform.Find("CharacterModel").Find("Launchpoint").gameObject.layer = layerToAdd;
+        }
+
+        //initializeCamera();
+        
+    }
+
+    public void initializeCamera()
     {
         Debug.Log("Initializing camera. Player conunt" + players.Count);
         for (int i = 0; i < players.Count; i++)
