@@ -21,7 +21,7 @@ public class Movement : MonoBehaviour
     //public GameObject camera;
     void Start()
     {
-        inputActionMap = GetComponent<PlayerInput>().actions.FindActionMap("Player");
+        inputActionMap = transform.parent.parent.GetComponent<PlayerInput>().actions.FindActionMap("Player");
         physics = GetComponent<Rigidbody>();
     }
 
@@ -42,7 +42,7 @@ public class Movement : MonoBehaviour
         //Debug.Log(Vector3.Angle(new Vector2(jumpDirection.x, jumpDirection.y), axis));
         //Debug.DrawRay(transform.position, new Vector2(jumpDirection.x, jumpDirection.z));
         //Debug.DrawRay(transform.position, axis);
-        Debug.Log(Vector3.Angle(jumpDirectionForward, transform.forward));
+        //Debug.Log(Vector3.Angle(jumpDirectionForward, transform.forward));
         //Debug.Log(transform.forward);
 
         float temporalSpeed = speed;
@@ -55,7 +55,7 @@ public class Movement : MonoBehaviour
                 //Debug.Log("Hola2");
             }
         }
-        Debug.Log(temporalSpeed);
+        //Debug.Log(temporalSpeed);
 
 
         Vector3 step = new Vector3(axis.x * Time.deltaTime * temporalSpeed, 0.0f, axis.y * Time.fixedDeltaTime * temporalSpeed);

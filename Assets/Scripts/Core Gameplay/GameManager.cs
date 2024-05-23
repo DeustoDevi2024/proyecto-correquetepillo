@@ -6,13 +6,13 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    
     public int desiredFramerate;
-
     [Space(20)]
-    private static GameManager us;
+    public static GameManager instance;
     
     public List<GameObject> players;
-    public PlayerManager playerManager; //Probablemente esto acabe siendo static
+    public PlayerManager1 playerManager; //Probablemente esto acabe siendo static
 
     [Space(20)]
     private double chrono = 0;
@@ -20,14 +20,14 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        DontDestroyOnLoad(this);
-        if (us == null)
+        if (instance == null)
         {
-            us = this;
+            instance = this;
         } else
         {
-            Destroy(this);
+            Destroy(this.gameObject);
         }
+        DontDestroyOnLoad(gameObject);
 
         Application.targetFrameRate = desiredFramerate; //Igual sólo hay que usar uno de los dos
         QualitySettings.vSyncCount = 1; 
@@ -46,11 +46,25 @@ public class GameManager : MonoBehaviour
     {
         foreach (PlayerInput playerInput in playerManager.players)
         {
+            Debug.Log(playerInput.name);
             GameObject player = playerInput.gameObject;
+            Debug.Log(player.name);
             players.Add(player);
-            DontDestroyOnLoad(player.transform.parent.gameObject);
-            player.GetComponent<PointManager>().gameManager = this;
+            //DontDestroyOnLoad(player.transform.parent.gameObject);
+            DontDestroyOnLoad(player);
+            
         }
+    }
+
+    public void ChangeToGameScene()
+    {
+        GetComponent<PlayerInputManager>().DisableJoining();
+        foreach (GameObject player in players)
+        {
+            player.transform.Find("Character").gameObject.SetActive(true);
+            player.transform.Find("UIControl").gameObject.SetActive(false);
+        }
+        SceneManager.LoadScene("SampleScene");
     }
 
     public void StartGame()
