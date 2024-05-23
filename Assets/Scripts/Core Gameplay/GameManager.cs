@@ -61,6 +61,7 @@ public class GameManager : MonoBehaviour
         GetComponent<PlayerInputManager>().DisableJoining();
         foreach (GameObject player in players)
         {
+            player.GetComponent<PlayerInput>().SwitchCurrentActionMap("Player");
             player.transform.Find("Character").gameObject.SetActive(true);
             player.transform.Find("UIControl").gameObject.SetActive(false);
         }
