@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEditor.Timeline.TimelinePlaybackControls;
 
 public class Launch : MonoBehaviour
 {
@@ -36,6 +37,7 @@ public class Launch : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        cam = transform.parent.parent.Find("Camera").gameObject;
         launchDirection = new Vector3(transform.position.x - cam.transform.position.x, transform.position.y - cam.transform.position.y, transform.position.z - cam.transform.position.z);
         defaulHeight = launchDirection.y; //Esto no funciona cuando saltas
         //Debug.Log(Physics.gravity);
@@ -110,7 +112,7 @@ public class Launch : MonoBehaviour
         //Debug.Log("Launch: "+ launchDirection);
     }
 
-    public void LaunchGrenade(InputAction.CallbackContext context)
+    public void LaunchGrenade(InputAction.CallbackContext context) //Cambiar esto a dos funciones
     {
         if (context.started && pocket != null)
         {
@@ -129,4 +131,29 @@ public class Launch : MonoBehaviour
             go.GetComponent<Item>().Use(launchDirection, launchForce, transform.parent.gameObject);
         }
     }
+
+    public void LauchGrenadeStart(InputAction.CallbackContext context)
+    {
+        if (pocket != null)
+        {
+            lineRenderer.enabled = true;
+            showLine = true;
+        }
+    }
+
+    public void LaunchGrenadeEnd(InputAction.CallbackContext context)
+    {
+        if (pocket != null)
+        {
+            lineRenderer.enabled = false;
+            showLine = false;
+            Debug.Log(launchDirection);
+            GameObject go = Instantiate(pocket);
+            pocket = null;
+            go.transform.position = launchpoint.position;
+            go.GetComponent<Item>().Use(launchDirection, launchForce, transform.parent.gameObject);
+        }
+    }
+
+
 }

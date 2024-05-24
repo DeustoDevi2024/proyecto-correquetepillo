@@ -20,12 +20,14 @@ public class UIControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
         characterSelection = FindObjectOfType<CharacterSelection>();
         characterSelection.AddUIController(this);
         playerInput = transform.parent.GetComponent<PlayerInput>();
         //Debug.Log("Player index: " + playerInput.playerIndex);
         playerInput.SwitchCurrentActionMap("UI");
         sharedPanel = GameObject.Find("CharacterSelectionPanel");
+        Debug.Log(playerInput.playerIndex);
         selfPanel = sharedPanel.transform.GetChild(playerInput.playerIndex).gameObject;
         selfPanel.GetComponent<Image>().color = Color.blue;
         //GameManager.instance.ChangeToGameScene();

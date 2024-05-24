@@ -21,7 +21,9 @@ public class Movement : MonoBehaviour
     //public GameObject camera;
     void Start()
     {
+        cam = transform.parent.Find("Camera").gameObject;
         inputActionMap = transform.parent.parent.GetComponent<PlayerInput>().actions.FindActionMap("Player");
+        //Debug.Log("IAM: "+inputActionMap);
         physics = GetComponent<Rigidbody>();
     }
 
@@ -111,15 +113,15 @@ public class Movement : MonoBehaviour
 
     public void Jump(InputAction.CallbackContext context)
     {
-        if (context.performed)
-        {
+        //if (context.performed)
+        //{
             if (grounded)
             {
                 physics.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
                 jumpDirectionInput = inputActionMap.FindAction("HorizontalMovement").ReadValue<Vector2>();
                 jumpDirectionForward = transform.forward;
             }
-        }
+        //}
     }
 
     private void OnCollisionEnter(Collision collision)

@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,8 @@ public class GameManager : MonoBehaviour
     
     public List<GameObject> players;
     public PlayerManager1 playerManager; //Probablemente esto acabe siendo static
+
+    public GameObject character;
 
     [Space(20)]
     private double chrono = 0;
@@ -44,11 +47,12 @@ public class GameManager : MonoBehaviour
 
     public void UpdatePlayers()
     {
+        players.Clear();
         foreach (PlayerInput playerInput in playerManager.players)
         {
-            Debug.Log(playerInput.name);
+            //Debug.Log(playerInput.name);
             GameObject player = playerInput.gameObject;
-            Debug.Log(player.name);
+            //Debug.Log(player.name);
             players.Add(player);
             //DontDestroyOnLoad(player.transform.parent.gameObject);
             DontDestroyOnLoad(player);
@@ -59,8 +63,10 @@ public class GameManager : MonoBehaviour
     public void ChangeToGameScene()
     {
         GetComponent<PlayerInputManager>().DisableJoining();
+        AddCharacters();
         playerManager.ManageLayers();
         playerManager.initializeCamera();
+        playerManager.SetUpEvents();
         foreach (GameObject player in players)
         {
             player.GetComponent<PlayerInput>().SwitchCurrentActionMap("Player");
@@ -68,6 +74,23 @@ public class GameManager : MonoBehaviour
             player.transform.Find("UIControl").gameObject.SetActive(false);
         }
         SceneManager.LoadScene("SampleScene");
+        //Provisional
+
+        //foreach (GameObject player in players)
+        //{
+        //    player.transform.position = new Vector3(0,10,0);
+        //}
+    }
+
+    public void AddCharacters()
+    {
+        for (int i = 0; i < players.Count; i++)
+        {
+            Instantiate(character, players[i].transform.Find("Character"));
+            Transform target = players[i].transform.Find("Character/CharacterModel(Clone)");
+            players[i].GetComponentInChildren<CinemachineFreeLook>().Follow = target;
+            players[i].GetComponentInChildren<CinemachineFreeLook>().LookAt = target;
+        }
     }
 
     public void StartGame()

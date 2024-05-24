@@ -10,6 +10,8 @@ public class PlayerManager1 : MonoBehaviour
     public GameManager gameManager;
     public int numeroDeJugadores = 2; //temporal
 
+    public GameObject character; //Temporal
+
     public List<PlayerInput> players { get; } = new List<PlayerInput>();
     private List<LayerMask> playerLayers;
 
@@ -24,9 +26,9 @@ public class PlayerManager1 : MonoBehaviour
     {
         Debug.Log(input.gameObject.name);
         players.Add(input);
-        GameObject playerParent = input.transform.Find("Character").gameObject;
+        //GameObject playerParent = input.transform.Find("Character").gameObject;
 
-        input.actions.FindAction("NewSubmit").performed += (ctx => Debug.Log("holassss")); //Funciona de manera independiente a los unity events
+        //input.actions.FindAction("NewSubmit").performed += (ctx => Debug.Log("holassss")); //Funciona de manera independiente a los unity events
 
 
         //input.actionEvents[0].AddListener(prueba);
@@ -46,8 +48,20 @@ public class PlayerManager1 : MonoBehaviour
         //    gameManager.StartGame();
         //}
 
-        playerParent.SetActive(false);
+        //playerParent.SetActive(false);
 
+    }
+
+    public void SetUpEvents()
+    {
+        foreach (PlayerInput input in players)
+        {
+            GameObject player = input.transform.Find("Character").gameObject;
+            input.actions.FindAction("Jump").performed += player.GetComponentInChildren<Movement>().Jump;
+            input.actions.FindAction("Catch").performed += player.GetComponentInChildren<PointManager>().Catch;
+            input.actions.FindAction("Launch").started += player.GetComponentInChildren<Launch>().LauchGrenadeStart;
+            input.actions.FindAction("Launch").canceled += player.GetComponentInChildren<Launch>().LaunchGrenadeEnd;
+        }
     }
 
     public void ManageLayers()
@@ -69,7 +83,8 @@ public class PlayerManager1 : MonoBehaviour
             //int layerToAdd2 = 9 + players.Count;
             //playerParent.GetComponentInChildren<Camera>().cullingMask |= 1 << layerToAdd2;
 
-            playerParent.transform.Find("CharacterModel").Find("Launchpoint").gameObject.layer = layerToAdd;
+            Debug.Log(playerParent);
+            playerParent.transform.Find("CharacterModel(Clone)/Launchpoint").gameObject.layer = layerToAdd;
         }
 
         //initializeCamera();

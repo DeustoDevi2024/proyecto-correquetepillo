@@ -1014,6 +1014,7 @@ MonoBehaviour:
   desiredFramerate: 0
   players: []
   playerManager: {fileID: 1370853478}
+  character: {fileID: 3948654331703558869, guid: 183fa8d095446c543b060e9152dca834, type: 3}
   gameTime: 300
 --- !u!81 &1370853475
 AudioListener:
@@ -1069,7 +1070,7 @@ MonoBehaviour:
       m_SingletonActionBindings: []
       m_Flags: 0
     m_Reference: {fileID: 0}
-  m_PlayerPrefab: {fileID: 7612692778613959840, guid: ab79558ddb06ac0429ede442a83bc72d, type: 3}
+  m_PlayerPrefab: {fileID: 6828190104254178783, guid: ab79558ddb06ac0429ede442a83bc72d, type: 3}
   m_SplitScreen: 1
   m_MaintainAspectRatioInSplitScreen: 0
   m_FixedNumberOfSplitScreens: -1
@@ -1109,6 +1110,7 @@ MonoBehaviour:
   canvas: {fileID: 5302049178228480899, guid: 2ff57eef94529524f92bf8f90c790de1, type: 3}
   gameManager: {fileID: 1370853473}
   numeroDeJugadores: 2
+  character: {fileID: 3948654331703558869, guid: 183fa8d095446c543b060e9152dca834, type: 3}
 --- !u!1 &1525780776
 GameObject:
   m_ObjectHideFlags: 0
