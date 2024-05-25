@@ -76,9 +76,11 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("SampleScene");
         //Provisional
 
+        StartGame();
+
         //foreach (GameObject player in players)
         //{
-        //    player.transform.position = new Vector3(0,10,0);
+        //    player.GetComponent<Movement>().transform.position = new Vector3(0, 10, 0);
         //}
     }
 
@@ -86,16 +88,16 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i < players.Count; i++)
         {
-            Instantiate(character, players[i].transform.Find("Character"));
-            Transform target = players[i].transform.Find("Character/CharacterModel(Clone)");
-            players[i].GetComponentInChildren<CinemachineFreeLook>().Follow = target;
-            players[i].GetComponentInChildren<CinemachineFreeLook>().LookAt = target;
+            GameObject instance = Instantiate(players[i].GetComponentInChildren<UIControl>().selectedCharacter, players[i].transform.Find("Character"));
+            //Transform target = players[i].transform.Find("Character/YellowBoxer(Clone)");
+            players[i].GetComponentInChildren<CinemachineFreeLook>().Follow = instance.transform;
+            players[i].GetComponentInChildren<CinemachineFreeLook>().LookAt = instance.transform;
         }
     }
 
     public void StartGame()
     {
-        players[Random.Range(0, players.Count)].GetComponent<PointManager>().isTarget = true;
+        players[Random.Range(0, players.Count)].GetComponentInChildren<PointManager>().isTarget = true;
     }
 
     public void EndGame(GameObject winner)

@@ -5,7 +5,7 @@ using UnityEngine;
 public class CharacterSelection : MonoBehaviour
 {
     [SerializeField] private List<UIControl> playerUIControllers;
-    [SerializeField] private List<GameObject> characters;
+    public List<GameObject> characters;
 
     public void AddUIController(UIControl controller)
     {

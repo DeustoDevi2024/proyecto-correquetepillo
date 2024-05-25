@@ -13,7 +13,9 @@ public class UIControl : MonoBehaviour
 
     private CharacterSelection characterSelection;
 
+
     public bool isReady { get; set; } = false;
+    public GameObject selectedCharacter { get; set; }
 
     int index = 0;
 
@@ -63,6 +65,7 @@ public class UIControl : MonoBehaviour
     {
         if (context.performed)
         {
+            selectedCharacter = characterSelection.characters[index];
             selfPanel.GetComponent<Image>().color = Color.green;
             isReady = true;
             characterSelection.NotifyReady();

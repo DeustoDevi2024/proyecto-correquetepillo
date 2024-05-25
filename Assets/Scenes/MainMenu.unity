@@ -289,7 +289,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerUIControllers: []
-  characters: []
+  characters:
+  - {fileID: 2095306963811510114, guid: 4aa24ed3ac546b644881da3686fb5ccc, type: 3}
+  - {fileID: 8362510438114321699, guid: 5b04b38f5a507ca4ca723a3180529399, type: 3}
 --- !u!1 &238347386
 GameObject:
   m_ObjectHideFlags: 0
@@ -1014,7 +1016,7 @@ MonoBehaviour:
   desiredFramerate: 0
   players: []
   playerManager: {fileID: 1370853478}
-  character: {fileID: 3948654331703558869, guid: 183fa8d095446c543b060e9152dca834, type: 3}
+  character: {fileID: 8362510438114321699, guid: 5b04b38f5a507ca4ca723a3180529399, type: 3}
   gameTime: 300
 --- !u!81 &1370853475
 AudioListener:

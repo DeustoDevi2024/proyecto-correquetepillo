@@ -66,7 +66,7 @@ public class PlayerManager1 : MonoBehaviour
 
     public void ManageLayers()
     {
-        int contador = 0;
+        int contador = 1;
         foreach (PlayerInput playerInput in players)
         {
             GameObject playerParent = playerInput.transform.Find("Character").gameObject;
@@ -84,7 +84,9 @@ public class PlayerManager1 : MonoBehaviour
             //playerParent.GetComponentInChildren<Camera>().cullingMask |= 1 << layerToAdd2;
 
             Debug.Log(playerParent);
-            playerParent.transform.Find("CharacterModel(Clone)/Launchpoint").gameObject.layer = layerToAdd;
+            //playerParent.transform.Find("YellowBoxer(Clone)/Launchpoint").gameObject.layer = layerToAdd;
+            
+            playerParent.transform.GetComponentInChildren<Launch>().gameObject.layer = layerToAdd;
         }
 
         //initializeCamera();
@@ -100,7 +102,7 @@ public class PlayerManager1 : MonoBehaviour
             {
                 if (i == j) continue;
                 GameObject player = players[i].gameObject;
-                Canvas label = Instantiate(canvas, player.transform.Find("Character/CharacterModel/LabelHolder"));
+                Canvas label = Instantiate(canvas, player.GetComponentInChildren<Movement>().transform.GetChild(0));
                 label.gameObject.layer = 6 + j;
                 Debug.Log(players[j].transform.Find("Character/Camera").gameObject);
                 label.GetComponent<LookAtCanvas>().player = players[j].transform.Find("Character/Camera").gameObject;

@@ -25,6 +25,7 @@ public class Movement : MonoBehaviour
     {
         cam = transform.parent.Find("Camera").gameObject;
         inputActionMap = transform.parent.parent.GetComponent<PlayerInput>().actions.FindActionMap("Player");
+        animator = GetComponentInChildren<Animator>();
         //Debug.Log("IAM: "+inputActionMap);
         physics = GetComponent<Rigidbody>();
     }
@@ -63,17 +64,18 @@ public class Movement : MonoBehaviour
 
 
         Vector3 step = new Vector3(axis.x * Time.deltaTime * temporalSpeed, 0.0f, axis.y * Time.fixedDeltaTime * temporalSpeed);
-        Debug.Log(axis.y);
+        //Debug.Log(axis.y);
         if (axis.y > 0.1 || axis.x > 0.1 || axis.x < -0.1)
         {
             animator.ResetTrigger("walkingBackwards");
             animator.SetTrigger("running");
-        } else if(axis.y < -0.1)
+        }
+        else if (axis.y < -0.1)
         {
             animator.ResetTrigger("running");
             animator.SetTrigger("walkingBackwards");
         }
-        else if(axis.y == 0f)
+        else if (axis.y == 0f)
         {
             animator.ResetTrigger("walkingBackwards");
             animator.ResetTrigger("running");

@@ -24,6 +24,7 @@ public class PointManager : MonoBehaviour
     void Start()
     {
         points = maxPoints;
+        animator = GetComponentInChildren<Animator>();
         //isTarget = true;
     }
 
