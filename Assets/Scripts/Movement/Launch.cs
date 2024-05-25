@@ -7,6 +7,7 @@ using static UnityEditor.Timeline.TimelinePlaybackControls;
 public class Launch : MonoBehaviour
 {
     public GameObject pocket;
+    public Animator animator;
 
     [Space(20)]
 
@@ -116,19 +117,24 @@ public class Launch : MonoBehaviour
     {
         if (context.started && pocket != null)
         {
+            animator.SetTrigger("aiming");
             lineRenderer.enabled = true;
             showLine = true;
+
         }
 
         if (context.canceled && pocket != null)
         {
+            animator.ResetTrigger("aiming");
             lineRenderer.enabled = false;
             showLine = false;
             Debug.Log(launchDirection);
             GameObject go = Instantiate(pocket);
             pocket = null;
             go.transform.position = launchpoint.position;
+            animator.SetTrigger("throw");
             go.GetComponent<Item>().Use(launchDirection, launchForce, transform.parent.gameObject);
+           
         }
     }
 

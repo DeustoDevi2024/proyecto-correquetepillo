@@ -12,6 +12,8 @@ public class Movement : MonoBehaviour
     public float speed;
     public float rotationSpeed;
     public float jumpForce;
+    public Animator animator;
+
     private Rigidbody physics;
     private bool grounded;
 
@@ -61,6 +63,22 @@ public class Movement : MonoBehaviour
 
 
         Vector3 step = new Vector3(axis.x * Time.deltaTime * temporalSpeed, 0.0f, axis.y * Time.fixedDeltaTime * temporalSpeed);
+        Debug.Log(axis.y);
+        if (axis.y > 0.1 || axis.x > 0.1 || axis.x < -0.1)
+        {
+            animator.ResetTrigger("walkingBackwards");
+            animator.SetTrigger("running");
+        } else if(axis.y < -0.1)
+        {
+            animator.ResetTrigger("running");
+            animator.SetTrigger("walkingBackwards");
+        }
+        else if(axis.y == 0f)
+        {
+            animator.ResetTrigger("walkingBackwards");
+            animator.ResetTrigger("running");
+        }
+        //physics.freezeRotation = true;
         this.transform.Translate(step);
         //this.transform.position += step;
 
@@ -117,6 +135,9 @@ public class Movement : MonoBehaviour
         //{
             if (grounded)
             {
+                animator.ResetTrigger("grounded");
+                animator.SetTrigger("jump");
+                //animator.ResetTrigger("landing");
                 physics.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
                 jumpDirectionInput = inputActionMap.FindAction("HorizontalMovement").ReadValue<Vector2>();
                 jumpDirectionForward = transform.forward;
@@ -128,6 +149,8 @@ public class Movement : MonoBehaviour
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
+            //if (!grounded) animator.SetTrigger("landing");
+            animator.SetTrigger("grounded");
             grounded = true;
             speed = 8;
         }
@@ -137,6 +160,7 @@ public class Movement : MonoBehaviour
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
+            animator.ResetTrigger("grounded");
             grounded = false;
             //StartCoroutine(MovementInAirCoroutine());
         }
