@@ -10,7 +10,7 @@ public class PlayerManager1 : MonoBehaviour
     public GameManager gameManager;
     public int numeroDeJugadores = 2; //temporal
 
-    public GameObject character; //Temporal
+    //public GameObject character; //Temporal
 
     public List<PlayerInput> players { get; } = new List<PlayerInput>();
     private List<LayerMask> playerLayers;

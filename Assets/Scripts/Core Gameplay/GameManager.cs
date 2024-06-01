@@ -15,7 +15,8 @@ public class GameManager : MonoBehaviour
     public List<GameObject> players;
     public PlayerManager1 playerManager; //Probablemente esto acabe siendo static
 
-    public GameObject character;
+    //public GameObject character;
+    public GameObject gui;
 
     [Space(20)]
     private double chrono = 0;
@@ -67,11 +68,13 @@ public class GameManager : MonoBehaviour
         playerManager.ManageLayers();
         playerManager.initializeCamera();
         playerManager.SetUpEvents();
+        AddInterface();
         foreach (GameObject player in players)
         {
             player.GetComponent<PlayerInput>().SwitchCurrentActionMap("Player");
             player.transform.Find("Character").gameObject.SetActive(true);
             player.transform.Find("UIControl").gameObject.SetActive(false);
+
         }
         SceneManager.LoadScene("SampleScene");
         //Provisional
@@ -82,6 +85,16 @@ public class GameManager : MonoBehaviour
         //{
         //    player.GetComponent<Movement>().transform.position = new Vector3(0, 10, 0);
         //}
+    }
+
+    public void AddInterface()
+    {
+        foreach (GameObject player in players)
+        {
+            GameObject guiInstance = Instantiate(gui, player.transform);
+            guiInstance.GetComponent<Canvas>().worldCamera = player.GetComponentInChildren<Camera>();
+            guiInstance.GetComponent<Canvas>().planeDistance = 1;
+        }
     }
 
     public void AddCharacters()
