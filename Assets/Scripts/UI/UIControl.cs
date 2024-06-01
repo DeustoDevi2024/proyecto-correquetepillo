@@ -10,6 +10,7 @@ public class UIControl : MonoBehaviour
     private PlayerInput playerInput;
     private GameObject sharedPanel;
     private GameObject selfPanel;
+    private RawImage image;
 
     private CharacterSelection characterSelection;
 
@@ -31,32 +32,48 @@ public class UIControl : MonoBehaviour
         sharedPanel = GameObject.Find("CharacterSelectionPanel");
         Debug.Log(playerInput.playerIndex);
         selfPanel = sharedPanel.transform.GetChild(playerInput.playerIndex).gameObject;
-        selfPanel.GetComponent<Image>().color = Color.blue;
+        //selfPanel.GetComponent<Image>().color = Color.blue;
+        image = selfPanel.transform.Find("Cardholder").GetComponentInChildren<RawImage>();
+        image.texture = characterSelection.cards[0];
         //GameManager.instance.ChangeToGameScene();
     }
 
     public void MoveLeft(InputAction.CallbackContext context)
     {
+        if (isReady) return;
         if (context.performed)
         {
-            Debug.Log(--index);
-            Debug.Log(selfPanel.transform.childCount);
-            TextMeshProUGUI tmp = selfPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>();
-            Debug.Log(tmp);
-            tmp.text = index.ToString();
+            Debug.Log(index);
+            //Debug.Log(--index);
+            //Debug.Log(selfPanel.transform.childCount);
+            //TextMeshProUGUI tmp = selfPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>();
+            //Debug.Log(tmp);
+            //tmp.text = index.ToString();
+            
+            index--;
+            if (index < 0)
+            {
+                index = characterSelection.cards.Count - 1;
+            }
+            image.texture = characterSelection.cards[index];
+
         }
 
     }
 
     public void MoveRight(InputAction.CallbackContext context)
     {
+        if (isReady) return;
         if (context.performed)
         {
-            Debug.Log(++index);
-            Debug.Log(selfPanel.transform.childCount);
-            TextMeshProUGUI tmp = selfPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>();
-            Debug.Log(tmp);
-            tmp.text = index.ToString();
+            Debug.Log(index);
+            Debug.Log(characterSelection.cards.Count);
+            index++;
+            if (index >=  characterSelection.cards.Count)
+            {
+                index = 0;
+            }
+            image.texture = characterSelection.cards[index];
         }
 
     }
@@ -66,8 +83,9 @@ public class UIControl : MonoBehaviour
         if (context.performed)
         {
             selectedCharacter = characterSelection.characters[index];
-            selfPanel.GetComponent<Image>().color = Color.green;
+            //selfPanel.GetComponent<Image>().color = Color.green;
             isReady = true;
+            selfPanel.transform.Find("CheckMark").gameObject.SetActive(true);
             characterSelection.NotifyReady();
         }
     }

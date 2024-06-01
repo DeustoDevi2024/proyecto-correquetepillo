@@ -6,6 +6,8 @@ public class CharacterSelection : MonoBehaviour
 {
     [SerializeField] private List<UIControl> playerUIControllers;
     public List<GameObject> characters;
+    public List<Texture> cards;
+    public Texture deactivatedCard;
 
     public void AddUIController(UIControl controller)
     {
