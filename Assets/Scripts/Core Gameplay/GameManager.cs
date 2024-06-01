@@ -1,6 +1,7 @@
 using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -16,14 +17,20 @@ public class GameManager : MonoBehaviour
     public PlayerManager1 playerManager; //Probablemente esto acabe siendo static
 
     //public GameObject character;
-    public GameObject gui;
+    public GameObject playerGui;
+    public GameObject timeGui;
 
     [Space(20)]
-    private double chrono = 0;
-    public double gameTime = 300;
+    private float chrono = 0;
+    public float gameTime = 300;
+
+    private float minutes;
+    private float seconds;
+    private string timeText;
 
     private void Awake()
     {
+   
         if (instance == null)
         {
             instance = this;
@@ -44,6 +51,15 @@ public class GameManager : MonoBehaviour
         {
             EndGame(null);
         }
+        ManageTime();
+    }
+
+    public void ManageTime()
+    {
+        minutes = Mathf.RoundToInt(gameTime / 60);
+        seconds = Mathf.RoundToInt(gameTime % 60);
+        timeText = minutes + ": " + seconds;
+        timeGui.GetComponentInChildren<TextMeshProUGUI>().text = timeText;
     }
 
     public void UpdatePlayers()
@@ -89,9 +105,10 @@ public class GameManager : MonoBehaviour
 
     public void AddInterface()
     {
+        
         foreach (GameObject player in players)
         {
-            GameObject guiInstance = Instantiate(gui, player.transform);
+            GameObject guiInstance = Instantiate(playerGui, player.transform);
             guiInstance.GetComponent<Canvas>().worldCamera = player.GetComponentInChildren<Camera>();
             guiInstance.GetComponent<Canvas>().planeDistance = 1;
         }
