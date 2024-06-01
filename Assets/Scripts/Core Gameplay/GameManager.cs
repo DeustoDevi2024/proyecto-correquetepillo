@@ -17,7 +17,8 @@ public class GameManager : MonoBehaviour
     public PlayerManager1 playerManager; //Probablemente esto acabe siendo static
 
     //public GameObject character;
-    public GameObject gui;
+    public GameObject playerGui;
+    public GameObject timeGui;
 
     [Space(20)]
     private float chrono = 0;
@@ -29,6 +30,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+   
         if (instance == null)
         {
             instance = this;
@@ -44,7 +46,6 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-
         chrono += Time.deltaTime;
         if (chrono >= gameTime)
         {
@@ -58,7 +59,7 @@ public class GameManager : MonoBehaviour
         minutes = Mathf.RoundToInt(gameTime / 60);
         seconds = Mathf.RoundToInt(gameTime % 60);
         timeText = minutes + ": " + seconds;
-        gui.GetComponentInChildren<TextMeshProUGUI>().text = timeText;
+        timeGui.GetComponentInChildren<TextMeshProUGUI>().text = timeText;
     }
 
     public void UpdatePlayers()
@@ -104,9 +105,10 @@ public class GameManager : MonoBehaviour
 
     public void AddInterface()
     {
+        
         foreach (GameObject player in players)
         {
-            GameObject guiInstance = Instantiate(gui, player.transform);
+            GameObject guiInstance = Instantiate(playerGui, player.transform);
             guiInstance.GetComponent<Canvas>().worldCamera = player.GetComponentInChildren<Camera>();
             guiInstance.GetComponent<Canvas>().planeDistance = 1;
         }
