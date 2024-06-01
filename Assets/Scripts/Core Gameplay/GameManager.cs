@@ -1,6 +1,7 @@
 using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -19,8 +20,12 @@ public class GameManager : MonoBehaviour
     public GameObject gui;
 
     [Space(20)]
-    private double chrono = 0;
-    public double gameTime = 300;
+    private float chrono = 0;
+    public float gameTime = 300;
+
+    private float minutes;
+    private float seconds;
+    private string timeText;
 
     private void Awake()
     {
@@ -39,11 +44,21 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+
         chrono += Time.deltaTime;
         if (chrono >= gameTime)
         {
             EndGame(null);
         }
+        ManageTime();
+    }
+
+    public void ManageTime()
+    {
+        minutes = Mathf.RoundToInt(gameTime / 60);
+        seconds = Mathf.RoundToInt(gameTime % 60);
+        timeText = minutes + ": " + seconds;
+        gui.GetComponentInChildren<TextMeshProUGUI>().text = timeText;
     }
 
     public void UpdatePlayers()

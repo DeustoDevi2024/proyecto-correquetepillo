@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -569,7 +569,7 @@ MonoBehaviour:
   desiredFramerate: 0
   players: []
   playerManager: {fileID: 0}
-  character: {fileID: 0}
+  gui: {fileID: 3954149933662802112, guid: 157f6c9c2620e8b4f9be0e6348ce0cd1, type: 3}
   gameTime: 300
 --- !u!1 &893494945
 GameObject:
