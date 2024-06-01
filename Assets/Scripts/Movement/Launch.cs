@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEditor.Timeline.TimelinePlaybackControls;
+using UnityEngine.UI;
 
 public class Launch : MonoBehaviour
 {
@@ -32,20 +32,26 @@ public class Launch : MonoBehaviour
 
     public LineRenderer lineRenderer;
     public float skew;
+
+    [Space(20)]
+
+    public Texture noObjectTexture;
     //private GameObject puntazo;
     private bool showLine = false;
+    private GameObject objectImage;
 
     // Start is called before the first frame update
     void Start()
     {
         cam = transform.parent.parent.Find("Camera").gameObject;
+        objectImage = GameObject.Find("Object");
         launchDirection = new Vector3(transform.position.x - cam.transform.position.x, transform.position.y - cam.transform.position.y, transform.position.z - cam.transform.position.z);
         defaulHeight = launchDirection.y; //Esto no funciona cuando saltas
         //Debug.Log(Physics.gravity);
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (!showLine)
         {
@@ -88,7 +94,7 @@ public class Launch : MonoBehaviour
         lineRenderer.positionCount = segments;
         float skewUnit = skew /segments;
         Vector2 normalized = new Vector2(transform.forward.x, transform.forward.z).normalized;
-        Vector3 skewVector = new Vector3(skewUnit * normalized.y, 0, skewUnit*-normalized.x); //Más o menos
+        Vector3 skewVector = new Vector3(skewUnit * normalized.y, 0, skewUnit*-normalized.x); //Mï¿½s o menos
         //Vector3 skewVector = transform.forward ;
         //Debug.Log("Direction: "+transform.forward);
         //Debug.Log("Skew: "+skewVector);
@@ -128,12 +134,14 @@ public class Launch : MonoBehaviour
             animator.ResetTrigger("aiming");
             lineRenderer.enabled = false;
             showLine = false;
-            Debug.Log(launchDirection);
+            //Debug.Log(launchDirection);
             GameObject go = Instantiate(pocket);
             pocket = null;
             go.transform.position = launchpoint.position;
             animator.SetTrigger("throw");
             go.GetComponent<Item>().Use(launchDirection, launchForce, transform.parent.gameObject);
+            objectImage.GetComponent<RawImage>().texture = noObjectTexture;
+
            
         }
     }

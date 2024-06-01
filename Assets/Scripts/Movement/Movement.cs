@@ -7,12 +7,18 @@ public enum FreezeType { FALLFREEZE, CATCHFREEZE };
 
 public class Movement : MonoBehaviour
 {
+    public delegate void JumpDel();
+    private Animator animator;
+
     InputActionMap inputActionMap;
     public GameObject cam;
     public float speed;
     public float rotationSpeed;
+    [Space(20)]
     public float jumpForce;
-    public Animator animator;
+    //public bool canJump;
+
+    public JumpDel jump;
 
     private Rigidbody physics;
     private bool grounded;
@@ -20,51 +26,57 @@ public class Movement : MonoBehaviour
     private Vector2 jumpDirectionInput = new Vector2 (0,0);
     private Vector3 jumpDirectionForward = new Vector3 (0,0,0);
     private bool freeze;
+    
+    private Vector3 velocity;
+    private Vector3 previousPosition = new Vector3(0,0,0);
+
+    [Header("Aerial Movement")]
+    [SerializeField] private float lerpPercentage;
+
+    public bool Grounded { get => grounded; set => grounded = value; }
+
+    [Space(20)]
+    //For slow surface
+    private int slowed = 0;
+    private float orignalSpeed;
+
+    //For ice
+    public int onIce { get; set; } = 0;
     //public GameObject camera;
     void Start()
     {
+        //canJump = true;
         cam = transform.parent.Find("Camera").gameObject;
+        animator = gameObject.GetComponentInChildren<Animator>();
+        if (GetComponent<DobleJump>() == null)
+            jump = BasicJump;
         inputActionMap = transform.parent.parent.GetComponent<PlayerInput>().actions.FindActionMap("Player");
-        animator = GetComponentInChildren<Animator>();
-        //Debug.Log("IAM: "+inputActionMap);
         physics = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        //Debug.Log(physics.velocity);
         //Debug.Log(grounded);
-        if (!freeze)
-            manageHorizontalMovement();
+        if (onIce == 0)
+        {
+            if (!freeze)
+                manageHorizontalMovement();
+        } else
+        {
+            MoveForwardIce();
+        }
         manageCamera();
+        
+        CalculateVelocity();
+        //Debug.Log("Velocity: " + velocity);
         //transform.rotation = Quaternion.identity;
     }
 
     private void manageHorizontalMovement()
     {
         Vector2 axis = inputActionMap.FindAction("HorizontalMovement").ReadValue<Vector2>();
-
-        //Debug.Log(Vector3.Angle(new Vector2(jumpDirection.x, jumpDirection.y), axis));
-        //Debug.DrawRay(transform.position, new Vector2(jumpDirection.x, jumpDirection.z));
-        //Debug.DrawRay(transform.position, axis);
-        //Debug.Log(Vector3.Angle(jumpDirectionForward, transform.forward));
-        //Debug.Log(transform.forward);
-
-        float temporalSpeed = speed;
-        if (!grounded)
-        {
-            //Debug.Log("Hola1");
-            if (Vector3.Angle(jumpDirectionInput, axis) > 45 || Vector3.Angle(jumpDirectionForward, transform.forward) > 45)
-            {
-                temporalSpeed *= 0.4f;
-                //Debug.Log("Hola2");
-            }
-        }
-        //Debug.Log(temporalSpeed);
-
-
-        Vector3 step = new Vector3(axis.x * Time.deltaTime * temporalSpeed, 0.0f, axis.y * Time.fixedDeltaTime * temporalSpeed);
-        //Debug.Log(axis.y);
         if (axis.y > 0.1 || axis.x > 0.1 || axis.x < -0.1)
         {
             animator.ResetTrigger("walkingBackwards");
@@ -80,9 +92,36 @@ public class Movement : MonoBehaviour
             animator.ResetTrigger("walkingBackwards");
             animator.ResetTrigger("running");
         }
-        //physics.freezeRotation = true;
+        //Debug.Log(Vector3.Angle(new Vector2(jumpDirection.x, jumpDirection.y), axis));
+        //Debug.DrawRay(transform.position, new Vector2(jumpDirection.x, jumpDirection.z));
+        //Debug.DrawRay(transform.position, axis);
+        //Debug.Log(Vector3.Angle(jumpDirectionForward, transform.forward));
+        //Debug.Log(transform.forward);
+
+        Vector2 temporalSpeed = new Vector3(axis.x * speed, axis.y * speed);
+        
+        if (!grounded)
+        {
+            Vector3 localVelocity = transform.InverseTransformDirection(velocity); //Pasar la velocidad a coordenadas locales
+            Vector2 targetSpeed = temporalSpeed;
+            Debug.DrawRay(transform.position, new Vector3(localVelocity.x, 0, localVelocity.z), Color.red);
+
+            Debug.DrawRay(transform.position, new Vector3(targetSpeed.x, 0, targetSpeed.y), Color.blue);
+            //temporalSpeed = Vector3.Lerp(speed, new Vector3)
+            temporalSpeed = Vector2.Lerp(targetSpeed, new Vector2(localVelocity.x, localVelocity.z), lerpPercentage); //Esto puede interactuar raro con el framerate
+            Debug.DrawRay(transform.position, new Vector3(temporalSpeed.x, 0, temporalSpeed.y));
+
+        }
+        //Debug.Log(temporalSpeed);
+
+
+        Vector3 step = new Vector3(Time.fixedDeltaTime * temporalSpeed.x, 0.0f, Time.fixedDeltaTime * temporalSpeed.y);
         this.transform.Translate(step);
-        //this.transform.position += step;
+        //Debug.Log(step);
+        //physics.velocity = new Vector3(temporalSpeed.x, physics.velocity.y, temporalSpeed.y);
+        //physics.MovePosition(physics.position + step);
+        //this.transform.Translate()
+        //this.transform.localPosition += transform.TransformDirection(step);
 
         if (step != Vector3.zero)
         {
@@ -90,14 +129,13 @@ public class Movement : MonoBehaviour
             physics.rotation = Quaternion.Slerp(physics.rotation, newRotation, rotationSpeed * Time.fixedDeltaTime);
 
         }
-
-        //}
       
 
     }
 
     private void manageCamera()
     {
+        //Debug.Log("asfdaf");
         Vector3 viewDirection = new Vector3(this.transform.position.x - cam.transform.position.x, 0, this.transform.position.z - cam.transform.position.z);
         viewDirection = viewDirection.normalized;
         float angle = Mathf.Atan2(viewDirection.x, viewDirection.z) * Mathf.Rad2Deg;
@@ -110,6 +148,14 @@ public class Movement : MonoBehaviour
         //    angle -= Mathf.PI;
         //}
         //transform.Rotate(Vector3.up, angle);
+    }
+
+    private void CalculateVelocity()
+    {
+        velocity = (transform.position - previousPosition) / Time.fixedDeltaTime;
+        previousPosition = transform.position;
+        //Debug.Log(velocity);
+        //Debug.Log(physics.velocity);
     }
 
     public void Freeze(FreezeType type)
@@ -133,27 +179,65 @@ public class Movement : MonoBehaviour
 
     public void Jump(InputAction.CallbackContext context)
     {
-        //if (context.performed)
-        //{
-            if (grounded)
-            {
-                animator.ResetTrigger("grounded");
-                animator.SetTrigger("jump");
-                //animator.ResetTrigger("landing");
-                physics.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-                jumpDirectionInput = inputActionMap.FindAction("HorizontalMovement").ReadValue<Vector2>();
-                jumpDirectionForward = transform.forward;
-            }
-        //}
+        if (context.performed && slowed == 0 && onIce == 0)
+        {
+            jump();
+        }
+    }
+
+    private void BasicJump()
+    {
+        if (grounded)
+        {
+            animator.ResetTrigger("grounded");
+            animator.SetTrigger("jump");
+            physics.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        }
+    }
+
+    public void Slow()
+    {
+        slowed++;
+        if (slowed == 1)
+        {
+            orignalSpeed = speed;
+            speed *= 0.2f;
+        }
+    }
+
+    public void UnSlow()
+    {
+        slowed--;
+        if (slowed <= 0)
+        {
+            speed = orignalSpeed;
+        }
+    }
+
+    private void MoveForwardIce()
+    {
+        
+        if (velocity.magnitude > 0.1 || velocity.magnitude < -0.1)
+        {
+            velocity = transform.InverseTransformDirection(velocity.x, 0, velocity.z);
+            Vector3 axis = new Vector3(velocity.x, 0, velocity.z);
+            axis.Normalize();
+            Vector3 step = new Vector3(axis.x * Time.deltaTime * speed * 3, 0.0f, axis.z * Time.fixedDeltaTime * speed * 3);
+            //physics.freezeRotation = true;
+            this.transform.Translate(step);
+        } else
+        {
+            manageHorizontalMovement();
+        }
+        
     }
 
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
-            //if (!grounded) animator.SetTrigger("landing");
             animator.SetTrigger("grounded");
-            grounded = true;
+            Grounded = true;
             speed = 8;
         }
     }
@@ -163,7 +247,7 @@ public class Movement : MonoBehaviour
         if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
             animator.ResetTrigger("grounded");
-            grounded = false;
+            Grounded = false;
             //StartCoroutine(MovementInAirCoroutine());
         }
 
@@ -171,7 +255,7 @@ public class Movement : MonoBehaviour
 
     IEnumerator MovementInAirCoroutine()
     {
-        while (speed >= 4 && !grounded)
+        while (speed >= 4 && !Grounded)
         {
             speed -= 0.1f;
             yield return new WaitForFixedUpdate();
