@@ -44,7 +44,8 @@ public class Launch : MonoBehaviour
     void Start()
     {
         cam = transform.parent.parent.Find("Camera").gameObject;
-        objectImage = GameObject.Find("Object");
+        objectImage = transform.parent.parent.parent.Find("Interface(Clone)/Panel/Object").gameObject;
+        Debug.Log("Foto: " + objectImage);
         launchDirection = new Vector3(transform.position.x - cam.transform.position.x, transform.position.y - cam.transform.position.y, transform.position.z - cam.transform.position.z);
         defaulHeight = launchDirection.y; //Esto no funciona cuando saltas
         //Debug.Log(Physics.gravity);
@@ -119,37 +120,36 @@ public class Launch : MonoBehaviour
         //Debug.Log("Launch: "+ launchDirection);
     }
 
-    public void LaunchGrenade(InputAction.CallbackContext context) //Cambiar esto a dos funciones
-    {
-        if (context.started && pocket != null)
-        {
-            animator.SetTrigger("aiming");
-            lineRenderer.enabled = true;
-            showLine = true;
+    //public void LaunchGrenade(InputAction.CallbackContext context) //Cambiar esto a dos funciones
+    //{
+    //    if (context.started && pocket != null)
+    //    {
+    //        animator.SetTrigger("aiming");
+    //        lineRenderer.enabled = true;
+    //        showLine = true;
 
-        }
+    //    }
 
-        if (context.canceled && pocket != null)
-        {
-            animator.ResetTrigger("aiming");
-            lineRenderer.enabled = false;
-            showLine = false;
-            //Debug.Log(launchDirection);
-            GameObject go = Instantiate(pocket);
-            pocket = null;
-            go.transform.position = launchpoint.position;
-            animator.SetTrigger("throw");
-            go.GetComponent<Item>().Use(launchDirection, launchForce, transform.parent.gameObject);
-            objectImage.GetComponent<RawImage>().texture = noObjectTexture;
-
-           
-        }
-    }
+    //    if (context.canceled && pocket != null)
+    //    {
+    //        animator.ResetTrigger("aiming");
+    //        lineRenderer.enabled = false;
+    //        showLine = false;
+    //        //Debug.Log(launchDirection);
+    //        GameObject go = Instantiate(pocket);
+    //        pocket = null;
+    //        go.transform.position = launchpoint.position;
+    //        animator.SetTrigger("throw");
+    //        go.GetComponent<Item>().Use(launchDirection, launchForce, transform.parent.gameObject);
+    //        objectImage.GetComponent<RawImage>().texture = noObjectTexture;
+    //    }
+    //}
 
     public void LauchGrenadeStart(InputAction.CallbackContext context)
     {
         if (pocket != null)
         {
+            animator.SetTrigger("aiming");
             lineRenderer.enabled = true;
             showLine = true;
         }
@@ -159,15 +159,16 @@ public class Launch : MonoBehaviour
     {
         if (pocket != null)
         {
+            animator.ResetTrigger("aiming");
             lineRenderer.enabled = false;
             showLine = false;
             Debug.Log(launchDirection);
             GameObject go = Instantiate(pocket);
             pocket = null;
             go.transform.position = launchpoint.position;
+            animator.SetTrigger("throw");
             go.GetComponent<Item>().Use(launchDirection, launchForce, transform.parent.gameObject);
+            objectImage.GetComponent<RawImage>().texture = noObjectTexture;
         }
     }
-
-
 }

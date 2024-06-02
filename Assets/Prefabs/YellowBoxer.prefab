@@ -121,6 +121,7 @@ MonoBehaviour:
   puntosObjeto: []
   lineRenderer: {fileID: 2353696856398498097}
   skew: 0.2
+  noObjectTexture: {fileID: 2800000, guid: 62fd0e0f54244974e8c8dc84293127c3, type: 3}
 --- !u!120 &2353696856398498097
 LineRenderer:
   serializedVersion: 2
@@ -347,7 +348,7 @@ MonoBehaviour:
   speed: 7
   rotationSpeed: 1000
   jumpForce: 10
-  animator: {fileID: 4229503371716024096}
+  lerpPercentage: 0
 --- !u!114 &5290292453210588087
 MonoBehaviour:
   m_ObjectHideFlags: 0

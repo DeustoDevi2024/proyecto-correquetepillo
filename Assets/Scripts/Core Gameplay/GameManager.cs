@@ -22,20 +22,16 @@ public class GameManager : MonoBehaviour
 
     [Space(20)]
     private float chrono = 0;
-    public float gameTime = 300;
+    public float gameTime;
 
     private float minutes;
     private float seconds;
     private string timeText;
 
-    private void Start()
-    {
-        timeGui = GameObject.Find("RemainingTime");
-    }
+    private bool onGame = false;
+
     private void Awake()
     {
-        timeGui = GameObject.Find("RemainingTime");
-   
         if (instance == null)
         {
             instance = this;
@@ -51,19 +47,33 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        if(!onGame)
+        {
+            return;
+        }
+
+        timeGui = GameObject.Find("TimeInterface/RemainingTime");
         chrono += Time.deltaTime;
         if (chrono >= gameTime)
         {
             EndGame(null);
         }
-        ManageTime();
+        if(timeGui != null)
+        {
+            ManageTime();
+        }
     }
 
     public void ManageTime()
     {
-        minutes = Mathf.RoundToInt(gameTime / 60);
-        seconds = Mathf.RoundToInt(gameTime % 60);
-        timeText = minutes + ": " + seconds;
+        minutes = (int) ((gameTime - chrono) / 60);
+        seconds = (int) ((gameTime - chrono) % 60);
+        string secondsString = seconds.ToString();
+        if(secondsString.Length == 1)
+        {
+            secondsString = "0" + secondsString;
+        }
+        timeText = minutes + ":" + secondsString;
         timeGui.GetComponent<TextMeshProUGUI>().text = timeText;
     }
 
@@ -84,6 +94,7 @@ public class GameManager : MonoBehaviour
 
     public void ChangeToGameScene()
     {
+
         GetComponent<PlayerInputManager>().DisableJoining();
         AddCharacters();
         playerManager.ManageLayers();
@@ -98,6 +109,9 @@ public class GameManager : MonoBehaviour
 
         }
         SceneManager.LoadScene("SampleScene");
+        timeGui = GameObject.Find("TimeInterface/RemainingTime");
+        onGame = true;
+        chrono = 0;
         //Provisional
 
         StartGame();
