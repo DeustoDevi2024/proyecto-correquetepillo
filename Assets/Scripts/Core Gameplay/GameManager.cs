@@ -116,6 +116,7 @@ public class GameManager : MonoBehaviour
             GameObject guiInstance = Instantiate(playerGui, player.transform);
             guiInstance.GetComponent<Canvas>().worldCamera = player.GetComponentInChildren<Camera>();
             guiInstance.GetComponent<Canvas>().planeDistance = 1;
+            //guiInstance.transform.Find("Panel").GetComponent<RectTransform>().
         }
     }
 
