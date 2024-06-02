@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
 
     //public GameObject character;
     public GameObject playerGui;
-    public GameObject timeGui;
+    private GameObject timeGui;
 
     [Space(20)]
     private float chrono = 0;
@@ -28,8 +28,13 @@ public class GameManager : MonoBehaviour
     private float seconds;
     private string timeText;
 
+    private void Start()
+    {
+        timeGui = GameObject.Find("RemainingTime");
+    }
     private void Awake()
     {
+        timeGui = GameObject.Find("RemainingTime");
    
         if (instance == null)
         {
@@ -59,7 +64,7 @@ public class GameManager : MonoBehaviour
         minutes = Mathf.RoundToInt(gameTime / 60);
         seconds = Mathf.RoundToInt(gameTime % 60);
         timeText = minutes + ": " + seconds;
-        timeGui.GetComponentInChildren<TextMeshProUGUI>().text = timeText;
+        timeGui.GetComponent<TextMeshProUGUI>().text = timeText;
     }
 
     public void UpdatePlayers()
